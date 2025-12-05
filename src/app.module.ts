@@ -5,13 +5,19 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { EstudiantesModule } from './estudiantes/estudiantes.module';
 import { AuthModule } from './Auth/auth.module';
+import { CarrerasModule } from './carreras/carreras.module';
+// 👇 1. IMPORTA EL MÓDULO DE PROFESORES
+import { ProfesoresModule } from './profesores/profesores.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // Hace las variables de entorno (.env) disponibles globalmente
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     EstudiantesModule,
-    AuthModule, // Importa el módulo de autenticación para que la app lo reconozca
+    AuthModule,
+    CarrerasModule,
+    // 👇 2. AGRÉGALO A LA LISTA DE IMPORTS
+    ProfesoresModule, 
   ],
   controllers: [AppController],
   providers: [AppService],

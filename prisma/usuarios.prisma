@@ -1,0 +1,18 @@
+datasource dbusuarios {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_USUARIOS")
+}
+
+generator clientusuarios {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-usuarios" // <--- Solo dos puntos (../)
+}
+// --- MODELOS DE USUARIOS ---
+
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  password String
+  nombre   String
+  roles    String[] @default(["user"])
+}

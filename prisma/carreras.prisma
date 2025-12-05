@@ -1,0 +1,94 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_CARRERAS")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-carreras"
+}
+
+// --- MODELOS ACADÉMICOS ---
+
+model Carrera {
+  id          String       @id @default(cuid())
+  nombre      String       @unique
+  materias    Materia[]
+  estudiantes Estudiante[] // <--- AGREGADO: Relación inversa
+}
+
+model Aula {
+  id       String    @id @default(cuid())
+  nombre   String    @unique
+  materias Materia[]
+}
+
+model Materia {
+  id     String @id @default(cuid())
+  nombre String
+
+  carrera   Carrera @relation(fields: [carreraId], references: [id])
+  carreraId String
+
+  profesorId String
+
+  aula   Aula   @relation(fields: [aulaId], references: [id])
+  aulaId String
+
+  inscripciones Inscripcion[]
+
+  ciclo   Ciclo?  @relation(fields: [cicloId], references: [id])
+  cicloId String?
+}
+
+model Estudiante {
+  id       String @id @default(cuid())
+  nombre   String
+  apellido String
+
+  // 👇 AQUÍ ESTABA EL FALTANTE 👇
+  carrera   Carrera @relation(fields: [carreraId], references: [id])
+  carreraId String
+  // 👆 ---------------------- 👆
+
+  inscripciones Inscripcion[]
+  matriculas    Matricula[]
+}
+
+model Inscripcion {
+  id           String     @id @default(cuid())
+  fecha        DateTime   @default(now())
+  estudiante   Estudiante @relation(fields: [estudianteId], references: [id])
+  estudianteId String
+  materia      Materia    @relation(fields: [materiaId], references: [id])
+  materiaId    String
+
+  @@unique([estudianteId, materiaId])
+}
+
+model Periodo {
+  id          String      @id @default(cuid())
+  nombre      String
+  fechaInicio DateTime
+  fechaFin    DateTime
+  matriculas  Matricula[]
+}
+
+model Ciclo {
+  id       String    @id @default(cuid())
+  nombre   String
+  materias Materia[]
+}
+
+model Matricula {
+  id    String   @id @default(cuid())
+  fecha DateTime @default(now())
+
+  estudiante   Estudiante @relation(fields: [estudianteId], references: [id])
+  estudianteId String
+
+  periodo   Periodo @relation(fields: [periodoId], references: [id])
+  periodoId String
+
+  @@unique([estudianteId, periodoId])
+}

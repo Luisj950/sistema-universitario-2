@@ -1,0 +1,24 @@
+datasource dbprofesores {
+  provider = "postgresql"
+  url      = env("DATABASE_URL_PROFESORES")
+}
+generator clientprofesores {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-profesores" // <--- Solo dos puntos (../)
+}
+
+// --- MODELOS DE PROFESORES ---
+
+model Profesor {
+  id       String   @id @default(cuid())
+  nombre   String
+  apellido String
+  titulos  Titulo[]
+}
+
+model Titulo {
+  id         String   @id @default(cuid())
+  nombre     String
+  profesor   Profesor @relation(fields: [profesorId], references: [id])
+  profesorId String
+}
